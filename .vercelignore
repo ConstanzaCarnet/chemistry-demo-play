@@ -1,0 +1,9 @@
+# Solo se publica la app (index.html, css/, js/).
+# Lo demás queda en el repositorio pero no se sube a Vercel.
+tests/
+sdd/
+*.md
+.git/
+.gitignore
+.vscode/
+node_modules/

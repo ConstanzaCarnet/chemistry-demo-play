@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "quimica-quest/ejercicio.schema.json",
+  "title": "Ejercicio",
+  "description": "Un ejercicio con respuesta verificable. El campo 't' indica el tipo. Los textos admiten el mini-markup ({H2O}, **negrita**, 10^23).",
+  "type": "object",
+  "required": ["t"],
+  "properties": {
+    "t": { "enum": ["mc", "tf", "num", "multi", "formula", "bal", "match"] },
+    "q": { "type": "string", "minLength": 1, "description": "Enunciado (no se usa en 'bal')" },
+    "exp": { "type": "string", "description": "Explicación que se muestra al terminar" },
+    "hint": { "type": "string", "description": "Pista opcional" },
+    "steps": { "type": "array", "items": { "type": "string" }, "description": "Resolución paso a paso" }
+  },
+  "allOf": [
+    { "if": { "properties": { "t": { "const": "mc" } } },
+      "then": { "required": ["q", "op", "a"], "properties": {
+        "op": { "type": "array", "minItems": 2, "maxItems": 6, "items": { "type": "string" } },
+        "a": { "type": "integer", "minimum": 0, "description": "Índice de la opción correcta" } } } },
+    { "if": { "properties": { "t": { "const": "tf" } } },
+      "then": { "required": ["q", "a"], "properties": { "a": { "type": "boolean" } } } },
+    { "if": { "properties": { "t": { "const": "num" } } },
+      "then": { "required": ["q", "a"], "properties": {
+        "a": { "type": "number" },
+        "tol": { "type": "number", "minimum": 0, "maximum": 0.2, "description": "Error relativo aceptado. 0 = exacto. Por defecto 0,02" },
+        "unit": { "type": "string" } } } },
+    { "if": { "properties": { "t": { "const": "multi" } } },
+      "then": { "required": ["q", "fields"], "properties": {
+        "fields": { "type": "array", "minItems": 1, "items": { "type": "object", "required": ["l", "a"],
+          "properties": { "l": { "type": "string" }, "a": { "type": "number" }, "tol": { "type": "number", "minimum": 0 }, "unit": { "type": "string" } } } } } } },
+    { "if": { "properties": { "t": { "const": "formula" } } },
+      "then": { "required": ["q", "a"], "properties": {
+        "a": { "type": "string", "pattern": "^[A-Z][A-Za-z0-9()·]*$", "description": "Fórmula esperada; se compara por composición" } } } },
+    { "if": { "properties": { "t": { "const": "bal" } } },
+      "then": { "required": ["r", "p"], "properties": {
+        "r": { "type": "array", "minItems": 1, "items": { "type": "string" }, "description": "Reactivos sin coeficientes" },
+        "p": { "type": "array", "minItems": 1, "items": { "type": "string" }, "description": "Productos sin coeficientes" } } } },
+    { "if": { "properties": { "t": { "const": "match" } } },
+      "then": { "required": ["q", "pairs"], "properties": {
+        "pairs": { "type": "array", "minItems": 2, "maxItems": 7,
+          "items": { "type": "array", "prefixItems": [{ "type": "string" }, { "type": "string" }], "minItems": 2, "maxItems": 2 } } } } }
+  ]
+}

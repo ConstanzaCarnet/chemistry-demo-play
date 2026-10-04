@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "quimica-quest/estado.schema.json",
+  "title": "Estado guardado del jugador",
+  "description": "Lo que se guarda en localStorage (clave 'quimica-quest-v1'). Al cargarse, se reconstruye con Safe.sanitizeState: lo que no cumpla este schema se descarta.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": { "type": "string", "maxLength": 18 },
+    "xp": { "type": "integer", "minimum": 0, "maximum": 10000000 },
+    "worlds": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "seen": { "type": "array", "uniqueItems": true, "items": { "type": "integer", "minimum": 0 } },
+          "ex": { "type": "object", "propertyNames": { "pattern": "^(0|[1-9][0-9]*)$" }, "additionalProperties": { "enum": ["ok", "ok2", "fail"] } }
+        }
+      }
+    },
+    "badges": { "type": "array", "uniqueItems": true, "items": { "enum": ["primer", "racha5", "racha10", "lector", "mundo", "tres", "equilibrista", "rayo", "curioso", "memoria", "practicante", "alquimista"] } },
+    "stats": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "correct": { "type": "integer", "minimum": 0 }, "wrong": { "type": "integer", "minimum": 0 },
+        "balances": { "type": "integer", "minimum": 0 }, "streak": { "type": "integer", "minimum": 0 },
+        "streakMax": { "type": "integer", "minimum": 0 }, "bestChallenge": { "type": "integer", "minimum": 0 },
+        "practice": { "type": "integer", "minimum": 0 }, "flips": { "type": "integer", "minimum": 0 },
+        "labs": { "type": "array", "uniqueItems": true, "items": { "enum": ["balance", "masa", "ph", "reactor", "tabla"] } }
+      }
+    },
+    "sound": { "type": "boolean" },
+    "theme": { "enum": ["", "light", "dark"] }
+  }
+}
